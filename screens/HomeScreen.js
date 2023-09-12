@@ -15,10 +15,13 @@ import Services from '../components/Services';
 import DressItem from '../components/DressItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../ProductReducer';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
 
     const cart = useSelector((state) => state.cart.cart);
+    const total = cart.map((item) => item.quantity * item.price).reduce((curr,prev) => curr + prev,0);
+    const navigation = useNavigation();
     console.log(cart);
 
     const [displayCurrentAddress, setDisplayCurrentAddress] = useState("we are loading your location");
@@ -192,6 +195,29 @@ const HomeScreen = () => {
             ))}
 
         </ScrollView>
+               {total === 0 ? (
+                null
+               ): (
+                <Pressable style={{ backgroundColor:"#088F8F",
+                padding:10,
+                marginBottom:30,
+                margin:15,
+                borderRadius:7,
+                flexDirection:"row",
+                alignItems:"center",
+                justifyContent:"space-between"
+                }}>
+                   <View>
+                       <Text style={{fontSize:17, fontWeight:"600",color:"white"}}>{cart.length} items | ₹{total}</Text>
+                       <Text style={{fontSize:15, fontWeight:"400",color:"white",marginVertical: 6}}>extra charges might apply</Text>
+                   </View>
+   
+                   <Pressable onPress={() => navigation.navigate("PickUp")}>
+                       <Text style={{fontSize:17, fontWeight:"600", color:"white"}}>Proceed to pickup</Text>
+                   </Pressable>
+               </Pressable>
+               )}
+            
         </>
     )
 }
