@@ -59,10 +59,11 @@ const RegisterScreen = () => {
                 <View style={{marginTop:50}}>
             <View style={{flexDirection:"row", alignItems:"center"}}>
                 <MaterialCommunityIcons name="email-outline" size={24} color="black" />
+                
                 <TextInput 
                 placeholder='Email'
                 value={email}
-                onChange={(text) => setEmail(text)}
+                onChangeText={(text) => setEmail(text)}
                 placeholderTextColor="black"
                  style={{
                     fontSize : email ? 18 : 18,
@@ -71,14 +72,15 @@ const RegisterScreen = () => {
                     marginLeft: 13,
                     width: 300,
                     marginVertical: 10,
-                }} />
+                }} /> 
             </View>
 
             <View style={{flexDirection:"row", alignItems:"center"}}>
                 <Ionicons name="key-outline" size={24} color="black" />
+                
                 <TextInput 
                 value={password}
-                onChange={(text) => setPassword(text)}
+                onChangeText={(text) => setPassword(text)}
                 secureTextEntry={true}
                 placeholder='Password'
                 placeholderTextColor="black"
@@ -89,14 +91,14 @@ const RegisterScreen = () => {
                     marginLeft: 13,
                     width: 300,
                     marginVertical: 20,
-                }} />
+                }} /> 
             </View>
 
             <View style={{flexDirection:"row", alignItems:"center"}}>
                 <Feather name="phone" size={24} color="black" />
                 <TextInput 
                 value={phone}
-                onChange={(text) => setPhone(text)}
+                onChangeText={(text) => setPhone(text)}
                 placeholder='Phone No'
                 placeholderTextColor="black"
                  style={{

@@ -1,19 +1,50 @@
-import { KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import { ActivityIndicator, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
 
 const LoginScreen = () => {
 
     const[email,setEmail] = useState("");
+    const[loading,setLoading] = useState(false);
     const[password,setPassword] = useState("");
     const navigation = useNavigation();
 
+    useEffect(()=>{
+        setLoading(true);
+        const unsubscribe = auth.onAuthStateChanged((authUser) => {
+            if(!authUser){
+                setLoading(false);
+            }
+            if(authUser){
+                navigation.navigate("Home");
+            }
+        });
+
+        return unsubscribe;
+    },[])
+
+    const login = () => {
+        signInWithEmailAndPassword(auth,email,password).then((userCredential) => {
+            console.log("user credential", userCredential);
+            const user = userCredential.user;
+            console.log("user details", user);
+        })
+    }
+
   return (
     <SafeAreaView style={{flex:1,backgroundColor:"white",alignItems:"center",padding:10}}>
-      <KeyboardAvoidingView>
+        { loading ? (
+            <View style={{flex:1,justifyContent:"center",alignItems:"center",flexDirection:"row"}}>
+                <Text style={{marginRight:10}}>Loading</Text>
+                <ActivityIndicator size="large" color={"red"}/>
+            </View>
+        ) : (
+            <KeyboardAvoidingView>
         <View style={{justifyContent:"center",alignItems:"center",marginTop:100}}>
             <Text style={{fontSize:20,color:"#662d91",fontWeight:"bold"}}>Sign In</Text>
 
@@ -26,7 +57,7 @@ const LoginScreen = () => {
                 <TextInput 
                 placeholder='Email'
                 value={email}
-                onChange={(text) => setEmail(text)}
+                onChangeText={(text) => setEmail(text)}
                 placeholderTextColor="black"
                  style={{
                     fontSize : email ? 18 : 18,
@@ -42,7 +73,7 @@ const LoginScreen = () => {
                 <Ionicons name="key-outline" size={24} color="black" />
                 <TextInput 
                 value={password}
-                onChange={(text) => setPassword(text)}
+                onChangeText={(text) => setPassword(text)}
                 secureTextEntry={true}
                 placeholder='Password'
                 placeholderTextColor="black"
@@ -56,7 +87,9 @@ const LoginScreen = () => {
                 }} />
             </View>
 
-            <Pressable style={{
+            <Pressable 
+            onPress={login}
+            style={{
                 width:200,
                 backgroundColor:"#318CE7",
                 padding: 15,
@@ -65,7 +98,13 @@ const LoginScreen = () => {
                 marginLeft: "auto",
                 marginRight: "auto",
                 }}>
-                <Text style={{fontSize:18,textAlign:"center",color:"white"}}>Login</Text>
+                <Text style=
+                {{
+                    fontSize:18,
+                    textAlign:"center",
+                    color:"white",
+                    }}
+                    >Login</Text>
             </Pressable>
 
             <Pressable onPress={() => navigation.navigate("Register")} style={{marginTop:20}}>
@@ -83,6 +122,8 @@ const LoginScreen = () => {
         </View>
 
       </KeyboardAvoidingView>
+        )}
+      
     </SafeAreaView>
   )
 }
