@@ -16,6 +16,8 @@ import DressItem from '../components/DressItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../ProductReducer';
 import { useNavigation } from '@react-navigation/native';
+import { db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const HomeScreen = () => {
 
@@ -23,6 +25,7 @@ const HomeScreen = () => {
     const total = cart.map((item) => item.quantity * item.price).reduce((curr,prev) => curr + prev,0);
     const navigation = useNavigation();
     console.log(cart);
+    const [items,setItems] = useState([]);
 
     const [displayCurrentAddress, setDisplayCurrentAddress] = useState("we are loading your location");
     const [locationServicesEnabled, setLocationServicesEnabled] = useState(false);
@@ -88,8 +91,13 @@ const HomeScreen = () => {
     useEffect(() => {
         if(product.length > 0) return;
 
-        const fetchProducts = () => {
-            services.map((service)=> dispatch(getProducts(service)));
+        const fetchProducts = async () => {
+            const colRef = collection(db,"types");
+            const docsSnap = await getDocs(colRef);
+            docsSnap.forEach((doc) => {
+                items.push(doc.data());
+            })
+            items?.map((service) => dispatch(getProducts(service)));
         };
         fetchProducts();
     },[]);
